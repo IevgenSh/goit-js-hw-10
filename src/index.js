@@ -6,35 +6,37 @@ import { fetchCountries } from './js/fetchCountries.js';
 import Debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
-const input = document.querySelector('#search-box');
-const list = document.querySelector('.country-list');
-const info = document.querySelector('.country-info');
+const refs = {
+  input: document.querySelector('#search-box'),
+  list: document.querySelector('.country-list'),
+  info: document.querySelector('.country-info'),
+};
 
-input.addEventListener('input', Debounce(onInput, DEBOUNCE_DELAY));
+refs.input.addEventListener('input', Debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(e) {
-  const name = input.value.trim();
+  const name = refs.input.value.trim();
   if (!name) {
     return (list.innerHTML = '', info.innerHTML = '')
   }
 
   fetchCountries(name)
     .then(countries => {
-      list.innerHTML = ''
-      info.innerHTML = ''
+      refs.list.innerHTML = ''
+      refs.info.innerHTML = ''
 
       if (countries.length > 10) {
         tooManyMatches();
       }
       else if (countries.length >= 2 && countries.length < 10) {
-        list.insertAdjacentHTML('beforeend', renderList(countries))
+        refs.list.insertAdjacentHTML('beforeend', renderList(countries))
       }
       else {
-        list.insertAdjacentHTML('beforeend', renderList(countries))
-        info.insertAdjacentHTML('beforeend', renderInfo(countries))
+        refs.list.insertAdjacentHTML('beforeend', renderList(countries))
+        refs.info.insertAdjacentHTML('beforeend', renderInfo(countries))
       }
     })
-    .catch(alertWrongName)
+    .catch(wrongName)
 }
 
 function renderList(countries) {
